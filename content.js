@@ -1,3 +1,13 @@
+const dataForButton = {
+  textContent: "Click to Download",
+  id: "seigadl-button-for-downloading"
+};
+
+const styleForButton = {
+  position: "absolute",
+  left: "0"
+};
+
 const setStyleTo = (element, style) => Object.assign(element.style, style);
 
 const getSeigaId = () =>
@@ -15,15 +25,12 @@ const callbackToDownload = event => {
 const imageWrapperOfSeigaPage = document.querySelector("#illust_link")
   .parentNode;
 
-const buttonForDownloading = Object.assign(document.createElement("button"), {
-  textContent: "Click to Download",
-  id: "seigadl-button-for-downloading"
-});
+const buttonForDownloading = Object.assign(
+  document.createElement("button"),
+  dataForButton
+);
 
-setStyleTo(buttonForDownloading, {
-  position: "absolute",
-  left: "0"
-});
+setStyleTo(buttonForDownloading, styleForButton);
 
 buttonForDownloading.addEventListener("click", callbackToDownload, false);
 
