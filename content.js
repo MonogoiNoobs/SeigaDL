@@ -3,7 +3,11 @@ const Constants = {
   DLBUTTON_TEXT_PENDING: "Just a Moment...",
   DLBUTTON_TEXT_DONE: "Done!",
   DLBUTTON_ELEMENT: "button",
-  DLBUTTON_ID: "seigadl-button-for-downloading"
+  DLBUTTON_ID: "seigadl-button-for-downloading",
+  SITE_TYPE: {
+    SEIGA: 0,
+    NIJIE: 1
+  }
 };
 
 const dataForButton = {
@@ -25,6 +29,7 @@ const callbackToDownload = event => {
   event.target.toggleAttribute("disabled");
   event.target.textContent = Constants.DLBUTTON_TEXT_PENDING;
   chrome.runtime.sendMessage({
+    siteType: Constants.SITE_TYPE.SEIGA,
     href: document.querySelector("#illust_link").href,
     id: getSeigaId(),
     protocol: window.location.protocol
