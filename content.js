@@ -1,7 +1,6 @@
 const Constants = {
   DLBUTTON_TEXT_DEFAULT: "Click to Download",
   DLBUTTON_TEXT_PENDING: "Just a Moment...",
-  DLBUTTON_TEXT_DONE: "Done!",
   DLBUTTON_ELEMENT: "button",
   DLBUTTON_ID: "seigadl-button-for-downloading",
   SITE_TYPE: {
