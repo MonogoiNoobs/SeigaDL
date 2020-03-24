@@ -5,18 +5,19 @@
 
   "description": "A simple extension to make downloading a seiga easier",
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background.js"],
+    "persistent": false
   },
   "content_scripts": [
     {
-      "matches": ["*://seiga.nicovideo.jp/seiga/*"],
+      "matches": ["https://seiga.nicovideo.jp/seiga/*"],
       "js": ["content.js"]
     }
   ],
   "permissions": [
     "activeTab",
     "downloads",
-    "*://*.nicovideo.jp/*",
-    "*://*.nicoseiga.jp/*"
+    "https://*.nicovideo.jp/*",
+    "https://*.nicoseiga.jp/*"
   ]
 }
