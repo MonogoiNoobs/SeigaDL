@@ -4,6 +4,8 @@ let data = {
   nickname: null
 };
 
+const urlForSeigaAPI = new URL("https://seiga.nicovideo.jp/api/");
+
 const replacementMap = new Map([
   ["<", "＜"],
   [">", "＞"],
@@ -51,13 +53,13 @@ const determiningCallback = (downloadItem, suggest) => {
 chrome.runtime.onMessage.addListener(message => {
   fetchAs(
     "text/xml",
-    `https://seiga.nicovideo.jp/api/illust/info?id=${message.id}`
+    `${urlForSeigaAPI.href}illust/info?id=${message.id}`
   ).then(xml => {
     data.userId = xml.querySelector("user_id").textContent;
     data.title = xml.querySelector("title").textContent;
     fetchAs(
       "text/xml",
-      `https://seiga.nicovideo.jp/api/user/info?id=${data.userId}`
+      `${urlForSeigaAPI.href}user/info?id=${data.userId}`
     ).then(userInfoXml => {
       data.nickname = userInfoXml.querySelector("nickname").textContent;
     });
