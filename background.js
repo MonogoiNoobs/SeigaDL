@@ -20,7 +20,7 @@ const escapeForbiddenCharactersFrom = origin => {
   let result = origin;
   for (const [forbidden, escaped] of replacementMap) {
     if (!result.includes(forbidden)) continue;
-    let regex = new RegExp(`${forbidden}`, "ug");
+    let regex = new RegExp(forbidden, "ug");
     result = result.replace(regex, escaped);
   }
   return result;
