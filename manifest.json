@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "SeigaDL",
-  "version": "0.2.0",
+  "version": "0.3.0",
 
   "description": "A simple extension to make downloading a seiga easier",
   "background": {

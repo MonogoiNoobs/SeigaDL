@@ -4,6 +4,28 @@ let data = {
   nickname: null
 };
 
+const replacementMap = new Map([
+  ["<", "＜"],
+  [">", "＞"],
+  ["\\", "￥"],
+  ["/", "／"],
+  ["|", "｜"],
+  [":", "："],
+  ["?", "？"],
+  ["*", "＊"],
+  ['"', '”']
+]);
+
+const escapeForbiddenCharactersFrom = origin => {
+  let result = origin;
+  for (const [forbidden, escaped] of replacementMap) {
+    if (!result.includes(forbidden)) continue;
+    let regex = new RegExp(`${forbidden}`, "ug");
+    result = result.replace(regex, escaped);
+  }
+  return result;
+}
+
 const fetchAs = async (mime, url) => {
   const response = await fetch(url, {credentials: "include"});
   const text = await response.text();
@@ -19,7 +41,7 @@ const downloadFrom = url => {
 
 const determiningCallback = (downloadItem, suggest) => {
   suggest({
-    filename: `SeigaDL/${data.nickname}_${data.userId}/${data.title}_${downloadItem.filename}`
+    filename: `SeigaDL/${escapeForbiddenCharactersFrom(data.nickname)}_${data.userId}/${escapeForbiddenCharactersFrom(data.title)}_${downloadItem.filename}`
   });
   chrome.downloads.onDeterminingFilename.removeListener(determiningCallback);
 };
