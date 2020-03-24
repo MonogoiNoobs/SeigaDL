@@ -1,4 +1,5 @@
 const setStyleTo = (element, style) => Object.assign(element.style, style);
+
 const getSeigaId = () => document.querySelector(`link[rel="canonical"]`).href.split("/im")[1];
 
 const callbackToDownload = event => {

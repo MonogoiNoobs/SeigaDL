@@ -4,23 +4,17 @@ let data = {
   nickname: null
 };
 
-const setStyleTo = (element, style) => Object.assign(element.style, style);
 const fetchAs = async (mime, url) => {
   const response = await fetch(url, {credentials: "include"});
   const text = await response.text();
   return new DOMParser().parseFromString(text, mime);
 };
+
 const downloadFrom = url => {
   const a = document.createElement("a");
   a.href = url;
   a.download = "download";
   a.click();
-};
-const getSeigaInfo = id => {
-  let result;
-  fetchAs("text/xml", `https://seiga.nicovideo.jp/api/illust/info?id=${id}`)
-    .then(v => { result = v; });
-  return result;
 };
 
 const determiningCallback = (downloadItem, suggest) => {
@@ -42,7 +36,6 @@ chrome.runtime.onMessage.addListener(message => {
     });
   fetchAs("text/html", message.href)
     .then(v => {
-      console.log(v.querySelector("#content .illust_view_big").dataset.src);
       chrome.downloads.onDeterminingFilename.addListener(determiningCallback);
       downloadFrom(`https://lohas.nicoseiga.jp/${v.querySelector("#content .illust_view_big").dataset.src}`);
     });
