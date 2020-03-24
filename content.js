@@ -1,6 +1,14 @@
+const Constants = {
+  DLBUTTON_TEXT_DEFAULT: "Click to Download",
+  DLBUTTON_TEXT_PENDING: "Just a Moment...",
+  DLBUTTON_TEXT_DONE: "Done!",
+  DLBUTTON_ELEMENT: "button",
+  DLBUTTON_ID: "seigadl-button-for-downloading"
+};
+
 const dataForButton = {
-  textContent: "Click to Download",
-  id: "seigadl-button-for-downloading"
+  textContent: Constants.DLBUTTON_TEXT_DEFAULT,
+  id: Constants.DLBUTTON_ID
 };
 
 const styleForButton = {
@@ -15,9 +23,11 @@ const getSeigaId = () =>
 
 const callbackToDownload = event => {
   event.target.toggleAttribute("disabled");
+  event.target.textContent = Constants.DLBUTTON_TEXT_PENDING;
   chrome.runtime.sendMessage({
     href: document.querySelector("#illust_link").href,
-    id: getSeigaId()
+    id: getSeigaId(),
+    protocol: window.location.protocol
   });
   event.target.removeEventListener("click", callbackToDownload, false);
 };
@@ -26,7 +36,7 @@ const imageWrapperOfSeigaPage = document.querySelector("#illust_link")
   .parentNode;
 
 const buttonForDownloading = Object.assign(
-  document.createElement("button"),
+  document.createElement(Constants.DLBUTTON_ELEMENT),
   dataForButton
 );
 

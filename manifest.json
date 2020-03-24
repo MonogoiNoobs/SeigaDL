@@ -10,14 +10,14 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://seiga.nicovideo.jp/seiga/*"],
+      "matches": ["*://seiga.nicovideo.jp/seiga/*"],
       "js": ["content.js"]
     }
   ],
   "permissions": [
     "activeTab",
     "downloads",
-    "https://*.nicovideo.jp/*",
-    "https://*.nicoseiga.jp/*"
+    "*://*.nicovideo.jp/*",
+    "*://*.nicoseiga.jp/*"
   ]
 }
