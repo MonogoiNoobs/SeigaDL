@@ -2,12 +2,7 @@ const Constants = {
   DLBUTTON_TEXT_DEFAULT: "Click to Download",
   DLBUTTON_TEXT_PENDING: "Just a Moment...",
   DLBUTTON_ELEMENT: "button",
-  DLBUTTON_ID: "seigadl-button-for-downloading",
-  SITE_TYPE: {
-    SEIGA: 0,
-    NIJIE: 1,
-    YJSNPI: 114514
-  }
+  DLBUTTON_ID: "seigadl-button-for-downloading"
 };
 
 const dataForButton = {
