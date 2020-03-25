@@ -34,10 +34,11 @@ const fetchAs = async (mime, url) => {
   return new DOMParser().parseFromString(text, mime);
 };
 
-const downloadFrom = url => {
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "download";
+const downloadFrom = href => {
+  const a = Object.assign(document.createElement("a"), {
+    href,
+    download: "download"
+  });
   a.click();
 };
 
@@ -55,13 +56,17 @@ chrome.runtime.onMessage.addListener(async message => {
     "text/xml",
     `${message.protocol}${urlForSeigaAPIWithoutProtocol}illust/info?id=${message.id}`
   );
-  data.userId = xml.querySelector("user_id").textContent;
-  data.title = xml.querySelector("title").textContent;
+  data = Object.assign(data, {
+    userId: xml.querySelector("user_id").textContent,
+    title: xml.querySelector("title").textContent
+  });
   const userInfoXml = await fetchAs(
     "text/xml",
     `${message.protocol}${urlForSeigaAPIWithoutProtocol}user/info?id=${data.userId}`
   );
-  data.nickname = userInfoXml.querySelector("nickname").textContent;
+  data = Object.assign(data, {
+    nickname: userInfoXml.querySelector("nickname").textContent
+  });
 
   const largerPictureHtml = await fetchAs("text/html", message.href);
   chrome.downloads.onDeterminingFilename.addListener(determiningCallback);
