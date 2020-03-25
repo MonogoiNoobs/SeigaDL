@@ -64,11 +64,11 @@ chrome.runtime.onMessage.addListener(message => {
       data.nickname = userInfoXml.querySelector("nickname").textContent;
     });
   });
-  fetchAs("text/html", message.href).then(v => {
+  fetchAs("text/html", message.href).then(largerPictureHtml => {
     chrome.downloads.onDeterminingFilename.addListener(determiningCallback);
     downloadFrom(
       `https://lohas.nicoseiga.jp/${
-        v.querySelector("#content .illust_view_big").dataset.src
+        largerPictureHtml.querySelector("#content .illust_view_big").dataset.src
       }`
     );
   });
