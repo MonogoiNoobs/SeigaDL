@@ -9,7 +9,7 @@ const urlForSeigaAPIWithoutProtocol = "//seiga.nicovideo.jp/api/";
 const replacementMap = new Map([
   ["<", "＜"],
   [">", "＞"],
-  ["\\", "￥"],
+  ["\\\\", "￥"],
   ["/", "／"],
   ["|", "｜"],
   [":", "："],
