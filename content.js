@@ -27,6 +27,7 @@ const getSiteType = () => {
       return "seiga";
 
     case "nijie.info":
+    case "pic.nijie.net":
       return "nijie";
 
     default:
