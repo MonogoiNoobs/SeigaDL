@@ -95,6 +95,9 @@ chrome.runtime.onMessage.addListener(async message => {
       return;
 
     case "nijie":
+      /**
+       * @todo 単数画像の時はそのままで、複数画像の時はファイルにまとめるようにする
+       */
       console.log("I'm getting nijie");
       const html = await fetchAs(
         "text/html",
