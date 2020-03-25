@@ -15,7 +15,7 @@ const styleForButton = {
   left: "0"
 };
 
-const getSiteType = () => {
+const siteType = (() => {
   switch (window.location.hostname) {
     case "seiga.nicovideo.jp":
     case "lohas.nicoseiga.jp":
@@ -28,35 +28,75 @@ const getSiteType = () => {
     default:
       return "YJSNPI";
   }
-};
+})();
 
 const setStyleTo = (element, style) => Object.assign(element.style, style);
 
 const pictureId = {
   seiga: window.location.pathname.split("/im")[1],
-  nijie: null,
+  nijie: new Map(
+    window.location.search
+      .substring(1)
+      .split("&")
+      .map(v => v.split("="))
+  ).get("id"),
   YJSNPI: "イクイクイクイクイクイクイクイクイクイクイクイク"
 };
 
 const callbackToDownload = event => {
-  const siteType = getSiteType();
   if (siteType === "YJSNPI") {
     alert("イキスギィ！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
     throw new Error("イキスギ両成敗");
   }
   event.target.toggleAttribute("disabled");
   event.target.textContent = Constants.DLBUTTON_TEXT_PENDING;
+  const getHref = () => {
+    switch (siteType) {
+      case "seiga":
+        return document.querySelector("#illust_link").href;
+      case "nijie":
+        return null;
+      default:
+        throw new Error();
+    }
+  };
+  const makeMessage = siteType => {
+    switch (siteType) {
+      case "seiga":
+        return {
+          href: document.querySelector("#illust_link").href
+        };
+      case "nijie":
+        return {
+          href: null,
+          nickname: document.querySelector("#pro img").alt,
+          userId: document
+            .querySelector("img[illust_id]")
+            .getAttribute("user_id"),
+          title: document.querySelector("#view-header .illust_title")
+            .textContent
+        };
+    }
+  };
   chrome.runtime.sendMessage({
     siteType,
-    href: document.querySelector("#illust_link").href,
+    ...makeMessage(siteType),
     id: pictureId[siteType],
     protocol: window.location.protocol
   });
   event.target.removeEventListener("click", callbackToDownload, false);
 };
 
-const imageWrapperOfSeigaPage = document.querySelector("#illust_link")
-  .parentNode;
+const getPictureWrapper = () => {
+  switch (siteType) {
+    case "seiga":
+      return document.querySelector("#illust_link").parentNode;
+    case "nijie":
+      return document.querySelector("#gallery");
+    default:
+      throw new Error();
+  }
+};
 
 const buttonForDownloading = Object.assign(
   document.createElement(Constants.DLBUTTON_ELEMENT),
@@ -67,4 +107,4 @@ setStyleTo(buttonForDownloading, styleForButton);
 
 buttonForDownloading.addEventListener("click", callbackToDownload, false);
 
-imageWrapperOfSeigaPage.appendChild(buttonForDownloading);
+getPictureWrapper().appendChild(buttonForDownloading);
