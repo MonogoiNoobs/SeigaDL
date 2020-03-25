@@ -5,7 +5,8 @@ const Constants = {
   DLBUTTON_ID: "seigadl-button-for-downloading",
   SITE_TYPE: {
     SEIGA: 0,
-    NIJIE: 1
+    NIJIE: 1,
+    YJSNPI: 114514
   }
 };
 
@@ -19,18 +20,39 @@ const styleForButton = {
   left: "0"
 };
 
+const getSiteType = () => {
+  switch (window.location.hostname) {
+    case "seiga.nicovideo.jp":
+    case "lohas.nicoseiga.jp":
+      return "seiga";
+
+    case "nijie.info":
+      return "nijie";
+
+    default:
+      return "YJSNPI";
+  }
+};
+
 const setStyleTo = (element, style) => Object.assign(element.style, style);
 
-const getPictureIdOf = siteType =>
-  [window.location.pathname.split("/im")[1]][siteType];
+const pictureId = {
+  seiga: window.location.pathname.split("/im")[1],
+  nijie: null
+};
 
 const callbackToDownload = event => {
+  const siteType = getSiteType();
+  if (siteType === "YJSNPI") {
+    alert("イキスギィ！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
+    throw new Error("イキスギ両成敗");
+  }
   event.target.toggleAttribute("disabled");
   event.target.textContent = Constants.DLBUTTON_TEXT_PENDING;
   chrome.runtime.sendMessage({
-    siteType: Constants.SITE_TYPE.SEIGA,
+    siteType,
     href: document.querySelector("#illust_link").href,
-    id: getPictureIdOf(Constants.SITE_TYPE.SEIGA),
+    id: pictureId(siteType),
     protocol: window.location.protocol
   });
   event.target.removeEventListener("click", callbackToDownload, false);
