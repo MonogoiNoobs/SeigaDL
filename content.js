@@ -21,8 +21,8 @@ const styleForButton = {
 
 const setStyleTo = (element, style) => Object.assign(element.style, style);
 
-const getSeigaId = () =>
-  document.querySelector(`link[rel="canonical"]`).href.split("/im")[1];
+const getPictureIdOf = siteType =>
+  [window.location.pathname.split("/im")[1]][siteType];
 
 const callbackToDownload = event => {
   event.target.toggleAttribute("disabled");
@@ -30,7 +30,7 @@ const callbackToDownload = event => {
   chrome.runtime.sendMessage({
     siteType: Constants.SITE_TYPE.SEIGA,
     href: document.querySelector("#illust_link").href,
-    id: getSeigaId(),
+    id: getPictureIdOf(Constants.SITE_TYPE.SEIGA),
     protocol: window.location.protocol
   });
   event.target.removeEventListener("click", callbackToDownload, false);
