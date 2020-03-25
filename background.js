@@ -111,7 +111,7 @@ chrome.runtime.onMessage.addListener(async message => {
           url: div.querySelector("img").src.replace(/^.+:/, message.protocol),
           filename: `NijieDL/${message.nickname}_${message.userId}/${
             message.title
-          }${message.id}_${i}_${div
+          }_${message.id}_${i}${div
             .querySelector("img")
             .src.replace(/^.*(\..+)/gu, "$1")}`
         });
