@@ -66,7 +66,7 @@ chrome.runtime.onMessage.addListener(async message => {
   const largerPictureHtml = await fetchAs("text/html", message.href);
   chrome.downloads.onDeterminingFilename.addListener(determiningCallback);
   downloadFrom(
-    `${message.protocol}lohas.nicoseiga.jp/${
+    `${message.protocol}//lohas.nicoseiga.jp/${
       largerPictureHtml.querySelector("#content .illust_view_big").dataset.src
     }`
   );
