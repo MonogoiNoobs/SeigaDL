@@ -38,7 +38,8 @@ const setStyleTo = (element, style) => Object.assign(element.style, style);
 
 const pictureId = {
   seiga: window.location.pathname.split("/im")[1],
-  nijie: null
+  nijie: null,
+  YJSNPI: "イクイクイクイクイクイクイクイクイクイクイクイク"
 };
 
 const callbackToDownload = event => {
@@ -52,7 +53,7 @@ const callbackToDownload = event => {
   chrome.runtime.sendMessage({
     siteType,
     href: document.querySelector("#illust_link").href,
-    id: pictureId(siteType),
+    id: pictureId[siteType],
     protocol: window.location.protocol
   });
   event.target.removeEventListener("click", callbackToDownload, false);
