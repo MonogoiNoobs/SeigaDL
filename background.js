@@ -50,26 +50,24 @@ const determiningCallback = (downloadItem, suggest) => {
   chrome.downloads.onDeterminingFilename.removeListener(determiningCallback);
 };
 
-chrome.runtime.onMessage.addListener(message => {
-  fetchAs(
+chrome.runtime.onMessage.addListener(async message => {
+  const xml = await fetchAs(
     "text/xml",
     `${message.protocol}${urlForSeigaAPIWithoutProtocol}illust/info?id=${message.id}`
-  ).then(xml => {
-    data.userId = xml.querySelector("user_id").textContent;
-    data.title = xml.querySelector("title").textContent;
-    fetchAs(
-      "text/xml",
-      `${message.protocol}${urlForSeigaAPIWithoutProtocol}user/info?id=${data.userId}`
-    ).then(userInfoXml => {
-      data.nickname = userInfoXml.querySelector("nickname").textContent;
-    });
-  });
-  fetchAs("text/html", message.href).then(largerPictureHtml => {
-    chrome.downloads.onDeterminingFilename.addListener(determiningCallback);
-    downloadFrom(
-      `https://lohas.nicoseiga.jp/${
-        largerPictureHtml.querySelector("#content .illust_view_big").dataset.src
-      }`
-    );
-  });
+  );
+  data.userId = xml.querySelector("user_id").textContent;
+  data.title = xml.querySelector("title").textContent;
+  const userInfoXml = await fetchAs(
+    "text/xml",
+    `${message.protocol}${urlForSeigaAPIWithoutProtocol}user/info?id=${data.userId}`
+  );
+  data.nickname = userInfoXml.querySelector("nickname").textContent;
+
+  const largerPictureHtml = await fetchAs("text/html", message.href);
+  chrome.downloads.onDeterminingFilename.addListener(determiningCallback);
+  downloadFrom(
+    `https://lohas.nicoseiga.jp/${
+      largerPictureHtml.querySelector("#content .illust_view_big").dataset.src
+    }`
+  );
 });
