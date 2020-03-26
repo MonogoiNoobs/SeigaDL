@@ -42,12 +42,9 @@ const fetchAs = async (mime, url) => {
 };
 
 const downloadFrom = href => {
-  const a = Object.assign(
-    document.createElementNS("http://www.w3.org/1999/xhtml", "a"),
-    {
-      href
-    }
-  );
+  const a = Object.assign(document.createElement("a"), {
+    href
+  });
   a.toggleAttribute("download");
   console.log(href, data, a);
   a.click();
