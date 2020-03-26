@@ -1,4 +1,4 @@
-# SeigaDL
+# SeigaDL (alpha)
 
 Firefox にはあったけど Chrome にはなかった静画(とニジエ)ワンクリックダウンローダー
 
