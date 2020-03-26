@@ -95,15 +95,11 @@ chrome.runtime.onMessage.addListener(async message => {
       return;
 
     case "nijie":
-      console.log("I'm getting nijie");
       const html = await fetchAs(
         "text/html",
         `${message.protocol}//nijie.info/view_popup.php?id=${message.id}`
       );
       console.log(html);
-      data.title = message.title;
-      data.userId = message.userId;
-      data.nickname = message.nickname;
       const pictureDivs = html.querySelector("#img_window").children;
       if (pictureDivs.length > 1) {
         for (const [i, div] of Array.from(pictureDivs).entries()) {
