@@ -95,9 +95,6 @@ chrome.runtime.onMessage.addListener(async message => {
       return;
 
     case "nijie":
-      /**
-       * @todo 単数画像の時はそのままで、複数画像の時はファイルにまとめるようにする
-       */
       console.log("I'm getting nijie");
       const html = await fetchAs(
         "text/html",
@@ -107,14 +104,26 @@ chrome.runtime.onMessage.addListener(async message => {
       data.title = message.title;
       data.userId = message.userId;
       data.nickname = message.nickname;
-      for (const [i, div] of Array.from(
-        html.querySelector("#img_window").children
-      ).entries()) {
+      const pictureDivs = html.querySelector("#img_window").children;
+      if (pictureDivs.length > 1) {
+        for (const [i, div] of Array.from(pictureDivs).entries()) {
+          chrome.downloads.download({
+            url: div.querySelector("img").src.replace(/^.+:/, message.protocol),
+            filename: `NijieDL/${message.nickname}_${message.userId}/${
+              message.title
+            }_${message.id}/${new String(i).padStart(
+              2,
+              "0"
+            )}${div.querySelector("img").src.replace(/^.*(\..+)/gu, "$1")}`
+          });
+        }
+      } else {
+        const div = pictureDivs[0];
         chrome.downloads.download({
           url: div.querySelector("img").src.replace(/^.+:/, message.protocol),
           filename: `NijieDL/${message.nickname}_${message.userId}/${
             message.title
-          }_${message.id}_${i}${div
+          }_${message.id}${div
             .querySelector("img")
             .src.replace(/^.*(\..+)/gu, "$1")}`
         });
