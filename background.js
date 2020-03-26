@@ -102,27 +102,28 @@ chrome.runtime.onMessage.addListener(async message => {
         for (const [i, div] of Array.from(pictureDivs).entries()) {
           chrome.downloads.download({
             url: div.querySelector("img").src.replace(/^.+:/, message.protocol),
-            filename: `NijieDL/${escapeForbiddenCharactersFrom(
-              message.nickname
-            )}_${message.userId}/${escapeForbiddenCharactersFrom(
-              message.title
-            )}_${message.id}/${new String(i).padStart(
-              2,
-              "0"
-            )}${div.querySelector("img").src.replace(/^.*(\..+)/gu, "$1")}`
+            filename: `${
+              folderName[message.siteType]
+            }/${escapeForbiddenCharactersFrom(message.nickname)}_${
+              message.userId
+            }/${escapeForbiddenCharactersFrom(message.title)}_${
+              message.id
+            }/${new String(i).padStart(2, "0")}${div
+              .querySelector("img")
+              .src.replace(/^.*(\..+)/gu, "$1")}`
           });
         }
       } else {
         const div = pictureDivs[0];
         chrome.downloads.download({
           url: div.querySelector("img").src.replace(/^.+:/, message.protocol),
-          filename: `NijieDL/${escapeForbiddenCharactersFrom(
-            message.nickname
-          )}_${message.userId}/${escapeForbiddenCharactersFrom(
-            message.title
-          )}_${message.id}${div
-            .querySelector("img")
-            .src.replace(/^.*(\..+)/gu, "$1")}`
+          filename: `${
+            folderName[message.siteType]
+          }/${escapeForbiddenCharactersFrom(message.nickname)}_${
+            message.userId
+          }/${escapeForbiddenCharactersFrom(message.title)}_${
+            message.id
+          }${div.querySelector("img").src.replace(/^.*(\..+)/gu, "$1")}`
         });
       }
       return;
