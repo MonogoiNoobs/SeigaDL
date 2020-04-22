@@ -2,7 +2,7 @@ let data = {
   userId: null,
   title: null,
   nickname: null,
-  siteType: null
+  siteType: null,
 };
 
 const urlForSeigaAPIWithoutProtocol = "//seiga.nicovideo.jp/api/";
@@ -16,16 +16,17 @@ const replacementMap = new Map([
   [":", "："],
   ["?", "？"],
   ["*", "＊"],
-  ['"', "”"]
+  ['"', "”"],
 ]);
 
 const folderName = {
   seiga: "SeigaDL",
   nijie: "NijieDL",
-  YJSNPI: "191919191919191919191919"
+  horne: "HorneDL",
+  YJSNPI: "191919191919191919191919",
 };
 
-const escapeForbiddenCharactersFrom = origin => {
+const escapeForbiddenCharactersFrom = (origin) => {
   let result = origin;
   for (const [forbidden, escaped] of replacementMap) {
     if (!result.includes(forbidden)) continue;
@@ -41,9 +42,9 @@ const fetchAs = async (mime, url) => {
   return new DOMParser().parseFromString(text, mime);
 };
 
-const downloadFrom = href => {
+const downloadFrom = (href) => {
   const a = Object.assign(document.createElement("a"), {
-    href
+    href,
   });
   a.toggleAttribute("download");
   console.log(href, data, a);
@@ -56,12 +57,12 @@ const determiningCallback = (downloadItem, suggest) => {
       data.nickname
     )}_${data.userId}/${escapeForbiddenCharactersFrom(data.title)}_${
       downloadItem.filename
-    }`
+    }`,
   });
   chrome.downloads.onDeterminingFilename.removeListener(determiningCallback);
 };
 
-chrome.runtime.onMessage.addListener(async message => {
+chrome.runtime.onMessage.addListener(async (message) => {
   data.siteType = message.siteType;
   switch (message.siteType) {
     case "seiga":
@@ -71,14 +72,14 @@ chrome.runtime.onMessage.addListener(async message => {
       );
       data = Object.assign(data, {
         userId: xml.querySelector("user_id").textContent,
-        title: xml.querySelector("title").textContent
+        title: xml.querySelector("title").textContent,
       });
       const userInfoXml = await fetchAs(
         "text/xml",
         `${message.protocol}${urlForSeigaAPIWithoutProtocol}user/info?id=${data.userId}`
       );
       data = Object.assign(data, {
-        nickname: userInfoXml.querySelector("nickname").textContent
+        nickname: userInfoXml.querySelector("nickname").textContent,
       });
 
       const largerPictureHtml = await fetchAs("text/html", message.href);
@@ -92,9 +93,10 @@ chrome.runtime.onMessage.addListener(async message => {
       return;
 
     case "nijie":
+    case "horne":
       const html = await fetchAs(
         "text/html",
-        `${message.protocol}//nijie.info/view_popup.php?id=${message.id}`
+        `${message.protocol}//${message.hostname}/view_popup.php?id=${message.id}`
       );
       console.log(html);
       const pictureDivs = html.querySelector("#img_window").children;
@@ -110,7 +112,7 @@ chrome.runtime.onMessage.addListener(async message => {
               message.id
             }/${new String(i).padStart(2, "0")}${div
               .querySelector("img")
-              .src.replace(/^.*(\..+)/gu, "$1")}`
+              .src.replace(/^.*(\..+)/gu, "$1")}`,
           });
         }
       } else {
@@ -123,7 +125,7 @@ chrome.runtime.onMessage.addListener(async message => {
             message.userId
           }/${escapeForbiddenCharactersFrom(message.title)}_${
             message.id
-          }${div.querySelector("img").src.replace(/^.*(\..+)/gu, "$1")}`
+          }${div.querySelector("img").src.replace(/^.*(\..+)/gu, "$1")}`,
         });
       }
       return;
