@@ -42,47 +42,51 @@ const pictureId = {
     window.location.search
       .substring(1)
       .split("&")
-      .map((v) => v.split("="))
+      .flatMap(v => [v.split("=")])
   ).get("id"),
   horne: new Map(
     window.location.search
       .substring(1)
       .split("&")
-      .map((v) => v.split("="))
+      .flatMap(v => [v.split("=")])
   ).get("id"),
   YJSNPI: "イクイクイクイクイクイクイクイクイクイクイクイク",
 };
 
-const callbackToDownload = (event) => {
+const createMessage = siteType => {
+  switch (siteType) {
+    case "seiga":
+      return {
+        href: document.querySelector("#illust_link").href,
+      };
+    case "nijie":
+    case "horne":
+      return {
+        href: null,
+        nickname: document.querySelector("#pro img").alt,
+        userId: document
+          .querySelector("img[illust_id]")
+          .getAttribute("user_id"),
+        title: document.querySelector("#view-header .illust_title")
+          .textContent
+          .replace(/^\s+$/, ""),
+        hostname: window.location.hostname,
+      };
+  }
+};
+
+const callbackToDownload = event => {
   if (siteType === "YJSNPI") {
     alert("イキスギィ！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
     throw new Error("イキスギ両成敗");
   }
   event.target.toggleAttribute("disabled");
   event.target.textContent = Constants.DLBUTTON_TEXT_PENDING;
-  const makeMessage = (siteType) => {
-    switch (siteType) {
-      case "seiga":
-        return {
-          href: document.querySelector("#illust_link").href,
-        };
-      case "nijie":
-      case "horne":
-        return {
-          href: null,
-          nickname: document.querySelector("#pro img").alt,
-          userId: document
-            .querySelector("img[illust_id]")
-            .getAttribute("user_id"),
-          title: document.querySelector("#view-header .illust_title")
-            .textContent,
-          hostname: window.location.hostname,
-        };
-    }
-  };
+  const message = createMessage(siteType);
+  console.log(message);
   chrome.runtime.sendMessage({
     siteType,
-    ...makeMessage(siteType),
+    ...message,
     id: pictureId[siteType],
     protocol: window.location.protocol,
   });
@@ -110,4 +114,6 @@ setStyleTo(buttonForDownloading, styleForButton);
 
 buttonForDownloading.addEventListener("click", callbackToDownload, false);
 
-getPictureWrapper().appendChild(buttonForDownloading);
+getPictureWrapper().append(buttonForDownloading);
+
+console.log("unti")
