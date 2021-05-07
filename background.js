@@ -26,7 +26,7 @@ const folderName = {
   YJSNPI: "191919191919191919191919",
 };
 
-const escapeForbiddenCharactersFrom = (origin) => {
+const encodeFilename = origin => {
   let result = origin;
   for (const [forbidden, escaped] of replacementMap) {
     if (!result.includes(forbidden)) continue;
@@ -42,7 +42,7 @@ const fetchAs = async (mime, url) => {
   return new DOMParser().parseFromString(text, mime);
 };
 
-const downloadFrom = (href) => {
+const downloadFrom = href => {
   const a = Object.assign(document.createElement("a"), {
     href,
   });
@@ -53,19 +53,18 @@ const downloadFrom = (href) => {
 
 const determiningCallback = (downloadItem, suggest) => {
   suggest({
-    filename: `${folderName[data.siteType]}/${escapeForbiddenCharactersFrom(
+    filename: `${folderName[data.siteType]}/${encodeFilename(
       data.nickname
-    )}_${data.userId}/${escapeForbiddenCharactersFrom(data.title)}_${
-      downloadItem.filename
-    }`,
+    )}_${data.userId}/${encodeFilename(data.title)}_${downloadItem.filename
+      }`,
   });
   chrome.downloads.onDeterminingFilename.removeListener(determiningCallback);
 };
 
-chrome.runtime.onMessage.addListener(async (message) => {
+chrome.runtime.onMessage.addListener(async message => {
   data.siteType = message.siteType;
   switch (message.siteType) {
-    case "seiga":
+    case "seiga": {
       const xml = await fetchAs(
         "text/xml",
         `${message.protocol}${urlForSeigaAPIWithoutProtocol}illust/info?id=${message.id}`
@@ -85,15 +84,14 @@ chrome.runtime.onMessage.addListener(async (message) => {
       const largerPictureHtml = await fetchAs("text/html", message.href);
       chrome.downloads.onDeterminingFilename.addListener(determiningCallback);
       downloadFrom(
-        `${message.protocol}//lohas.nicoseiga.jp/${
-          largerPictureHtml.querySelector("#content .illust_view_big").dataset
-            .src
-        }`
+        largerPictureHtml.querySelector("#content .illust_view_big")
+          .dataset
+          .src
       );
-      return;
+    } return;
 
     case "nijie":
-    case "horne":
+    case "horne": {
       const html = await fetchAs(
         "text/html",
         `${message.protocol}//${message.hostname}/view_popup.php?id=${message.id}`
@@ -104,31 +102,26 @@ chrome.runtime.onMessage.addListener(async (message) => {
         for (const [i, div] of Array.from(pictureDivs).entries()) {
           chrome.downloads.download({
             url: div.querySelector("img").src.replace(/^.+:/, message.protocol),
-            filename: `${
-              folderName[message.siteType]
-            }/${escapeForbiddenCharactersFrom(message.nickname)}_${
-              message.userId
-            }/${escapeForbiddenCharactersFrom(message.title)}_${
-              message.id
-            }/${new String(i).padStart(2, "0")}${div
-              .querySelector("img")
-              .src.replace(/^.*(\..+)/gu, "$1")}`,
+            filename: `${folderName[message.siteType]
+              }/${encodeFilename(message.nickname)}_${message.userId
+              }/${encodeFilename(message.title)}_${message.id
+              }/${new String(i).padStart(2, "0")}${div
+                .querySelector("img")
+                .src
+                .replace(/^.*(\..+)/gu, "$1")}`,
           });
         }
       } else {
         const div = pictureDivs[0];
         chrome.downloads.download({
           url: div.querySelector("img").src.replace(/^.+:/, message.protocol),
-          filename: `${
-            folderName[message.siteType]
-          }/${escapeForbiddenCharactersFrom(message.nickname)}_${
-            message.userId
-          }/${escapeForbiddenCharactersFrom(message.title)}_${
-            message.id
-          }${div.querySelector("img").src.replace(/^.*(\..+)/gu, "$1")}`,
+          filename: `${folderName[message.siteType]
+            }/${encodeFilename(message.nickname)}_${message.userId
+            }/${encodeFilename(message.title)}_${message.id
+            }${div.querySelector("img").src.replace(/^.*(\..+)/gu, "$1")}`,
         });
       }
-      return;
+    } return;
 
     default:
       return;
