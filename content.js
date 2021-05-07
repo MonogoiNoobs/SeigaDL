@@ -60,17 +60,6 @@ const callbackToDownload = (event) => {
   }
   event.target.toggleAttribute("disabled");
   event.target.textContent = Constants.DLBUTTON_TEXT_PENDING;
-  const getHref = () => {
-    switch (siteType) {
-      case "seiga":
-        return document.querySelector("#illust_link").href;
-      case "nijie":
-      case "horne":
-        return null;
-      default:
-        throw new Error();
-    }
-  };
   const makeMessage = (siteType) => {
     switch (siteType) {
       case "seiga":
