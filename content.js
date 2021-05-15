@@ -2,17 +2,17 @@ const Constants = {
   DLBUTTON_TEXT_DEFAULT: "Click to Download",
   DLBUTTON_TEXT_PENDING: "Just a Moment...",
   DLBUTTON_ELEMENT: "button",
-  DLBUTTON_ID: "seigadl-button-for-downloading"
+  DLBUTTON_ID: "seigadl-button-for-downloading",
 };
 
 const dataForButton = {
   textContent: Constants.DLBUTTON_TEXT_DEFAULT,
-  id: Constants.DLBUTTON_ID
+  id: Constants.DLBUTTON_ID,
 };
 
 const styleForButton = {
   position: "absolute",
-  left: "0"
+  left: "0",
 };
 
 const siteType = (() => {
@@ -24,6 +24,10 @@ const siteType = (() => {
     case "nijie.info":
     case "pic.nijie.net":
       return "nijie";
+
+    case "horne.red":
+    case "pic.horne.red":
+      return "horne";
 
     default:
       return "YJSNPI";
@@ -38,9 +42,37 @@ const pictureId = {
     window.location.search
       .substring(1)
       .split("&")
-      .map(v => v.split("="))
+      .flatMap(v => [v.split("=")])
   ).get("id"),
-  YJSNPI: "イクイクイクイクイクイクイクイクイクイクイクイク"
+  horne: new Map(
+    window.location.search
+      .substring(1)
+      .split("&")
+      .flatMap(v => [v.split("=")])
+  ).get("id"),
+  YJSNPI: "イクイクイクイクイクイクイクイクイクイクイクイク",
+};
+
+const createMessage = siteType => {
+  switch (siteType) {
+    case "seiga":
+      return {
+        href: document.querySelector("#illust_link").href,
+      };
+    case "nijie":
+    case "horne":
+      return {
+        href: null,
+        nickname: document.querySelector("#pro img").alt,
+        userId: document
+          .querySelector("img[illust_id]")
+          .getAttribute("user_id"),
+        title: document.querySelector("#view-header .illust_title")
+          .textContent
+          .replace(/^\s+$/, ""),
+        hostname: window.location.hostname,
+      };
+  }
 };
 
 const callbackToDownload = event => {
@@ -50,39 +82,13 @@ const callbackToDownload = event => {
   }
   event.target.toggleAttribute("disabled");
   event.target.textContent = Constants.DLBUTTON_TEXT_PENDING;
-  const getHref = () => {
-    switch (siteType) {
-      case "seiga":
-        return document.querySelector("#illust_link").href;
-      case "nijie":
-        return null;
-      default:
-        throw new Error();
-    }
-  };
-  const makeMessage = siteType => {
-    switch (siteType) {
-      case "seiga":
-        return {
-          href: document.querySelector("#illust_link").href
-        };
-      case "nijie":
-        return {
-          href: null,
-          nickname: document.querySelector("#pro img").alt,
-          userId: document
-            .querySelector("img[illust_id]")
-            .getAttribute("user_id"),
-          title: document.querySelector("#view-header .illust_title")
-            .textContent
-        };
-    }
-  };
+  const message = createMessage(siteType);
+  console.log(message);
   chrome.runtime.sendMessage({
     siteType,
-    ...makeMessage(siteType),
+    ...message,
     id: pictureId[siteType],
-    protocol: window.location.protocol
+    protocol: window.location.protocol,
   });
   event.target.removeEventListener("click", callbackToDownload, false);
 };
@@ -92,9 +98,10 @@ const getPictureWrapper = () => {
     case "seiga":
       return document.querySelector("#illust_link").parentNode;
     case "nijie":
+    case "horne":
       return document.querySelector("#gallery");
     default:
-      throw new Error();
+      return document.body;
   }
 };
 
@@ -107,4 +114,6 @@ setStyleTo(buttonForDownloading, styleForButton);
 
 buttonForDownloading.addEventListener("click", callbackToDownload, false);
 
-getPictureWrapper().appendChild(buttonForDownloading);
+getPictureWrapper().append(buttonForDownloading);
+
+console.log("unti")
