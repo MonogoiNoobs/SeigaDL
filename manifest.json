@@ -1,29 +1,32 @@
 {
-  "manifest_version": 2,
-  "name": "SeigaDL",
-  "version": "0.5.0",
-
-  "description": "A simple extension to make downloading a seiga easier",
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "*://seiga.nicovideo.jp/seiga/*",
-        "*://nijie.info/view.php*",
-        "*://horne.red/view.php*"
-      ],
-      "js": ["content.js"]
-    }
-  ],
-  "permissions": [
-    "activeTab",
-    "downloads",
-    "*://*.nicovideo.jp/*",
-    "*://*.nicoseiga.jp/*",
-    "*://nijie.info/*",
-    "*://horne.red/*"
-  ]
+	"manifest_version": 2,
+	"name": "SeigaDL",
+	"version": "0.6.0",
+	"description": "A simple extension to make downloading a seiga easier",
+	"background": {
+		"scripts": [
+			"src/background.js"
+		],
+		"persistent": false
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"*://seiga.nicovideo.jp/seiga/*",
+				"*://nijie.info/view.php*",
+				"*://horne.red/view.php*"
+			],
+			"js": [
+				"src/content.js"
+			]
+		}
+	],
+	"permissions": [
+		"activeTab",
+		"downloads",
+		"*://*.nicovideo.jp/*",
+		"*://*.nicoseiga.jp/*",
+		"*://nijie.info/*",
+		"*://horne.red/*"
+	]
 }
